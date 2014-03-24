@@ -8,8 +8,24 @@ var routes = require('./routes');
 var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
-
+var MongoStore = require('connect-mongo');
+var settings = require('./settings');
 var app = express();
+
+//
+app.configure(function(){
+	app.set('views', __dirname + '/views');
+	app.set('view engine', 'ejs');
+	app.use(express.bodyParser());
+	app.use(express.methodOverride());
+	app.use(express.cookieParser());
+	app.use(express.session({
+		secret: settings.cookieSecret,
+		store: new MongoStore({
+			db:setting.db
+		})
+	}));
+});
 
 // all environments
 app.set('port', process.env.PORT || 3000);
