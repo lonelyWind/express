@@ -8,7 +8,7 @@ var routes = require('./routes');
 var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
-var MongoStore = require('connect-mongo');
+var MongoStore = require('connect-mongo')(express);
 var settings = require('./settings');
 var app = express();
 
@@ -22,12 +22,16 @@ app.configure(function(){
 	app.use(express.session({
 		secret: settings.cookieSecret,
 		store: new MongoStore({
-			db:setting.db
+			db:settings.db
 		})
 	}));
+	//app.use(routes(app));
+	app.use(app.router);
+	app.use(express.static(__dirname + '/public'));
 });
 
 // all environments
+/*
 app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -38,7 +42,7 @@ app.use(express.urlencoded());
 app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
-
+*/
 // development only
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
